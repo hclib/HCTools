@@ -110,4 +110,17 @@
     return self.frame.size;
 }
 
+- (void)addDashBorderWithWidth:(CGFloat)borderWidth dashPattern:(NSArray<NSNumber *> *)dashPattern color:(UIColor *)color{
+    CAShapeLayer *borderLayer = [CAShapeLayer layer];
+    borderLayer.bounds = self.bounds;
+    borderLayer.position = CGPointMake(CGRectGetMidX(self.bounds), CGRectGetMidY(self.bounds));
+    borderLayer.path = [UIBezierPath bezierPathWithRoundedRect:borderLayer.bounds cornerRadius:self.layer.cornerRadius].CGPath;
+    borderLayer.lineWidth = borderWidth;
+    //虚线边框
+    borderLayer.lineDashPattern = dashPattern;
+    borderLayer.fillColor = [UIColor clearColor].CGColor;
+    borderLayer.strokeColor = color.CGColor;
+    [self.layer addSublayer:borderLayer];
+}
+
 @end
