@@ -1,9 +1,9 @@
 //
-//  UIColor+Hex.m
-//  funner
+//  UIColor+Category.m
+//  SpaceHome
 //
-//  Created by suhc on 15/7/3.
-//  Copyright (c) 2015年 ilinker. All rights reserved.
+//  Created by suhc on 2017/7/19.
+//  Copyright © 2017年 David. All rights reserved.
 //
 
 #import "UIColor+Category.h"
@@ -11,7 +11,7 @@
 @implementation UIColor (Category)
 
 //  十六进制颜色转换为UIColor
-+ (UIColor *)colorWithHexString:(NSString *)hexString{
++ (UIColor *)colorWithHexString:(NSString *)hexString alpha:(CGFloat)alpha{
     
     NSString *colorString = [[hexString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] uppercaseString];
     
@@ -55,8 +55,11 @@
     [[NSScanner scannerWithString:gString] scanHexInt:&g];
     [[NSScanner scannerWithString:bString] scanHexInt:&b];
     
-    return [UIColor colorWithRed:((float)r/255.0f) green:((float)g/255.0f) blue:((float)b/255.0f) alpha:1.0f];
+    return [UIColor colorWithRed:((float)r/255.0f) green:((float)g/255.0f) blue:((float)b/255.0f) alpha:alpha];
 }
 
++ (UIColor *)colorWithHexString:(NSString *)hexColorString {
+    return [UIColor colorWithHexString:hexColorString alpha:1.f];
+}
 
 @end

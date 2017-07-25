@@ -1,15 +1,16 @@
 //
-//  UIView+Frame.m
-//  ailink
+//  UIView+Category.m
+//  SpaceHome
 //
-//  Created by suhc on 15/5/19.
-//  Copyright (c) 2015年 ilinker. All rights reserved.
+//  Created by suhc on 2017/7/18.
+//  Copyright © 2017年 David. All rights reserved.
 //
 
 #import "UIView+Category.h"
 
 @implementation UIView (Category)
 
+#pragma mark - 设置frame
 - (void)setTop:(CGFloat)top{
     CGRect frame = self.frame;
     frame.origin.y = top;
@@ -110,6 +111,106 @@
     return self.frame.size;
 }
 
+#pragma mark - 设置圆角
+- (void)setCornerOnTop:(CGFloat) conner {
+    UIBezierPath *maskPath;
+    maskPath = [UIBezierPath bezierPathWithRoundedRect:self.bounds
+                                     byRoundingCorners:(UIRectCornerTopLeft | UIRectCornerTopRight)
+                                           cornerRadii:CGSizeMake(conner, conner)];
+    CAShapeLayer *maskLayer = [[CAShapeLayer alloc] init];
+    maskLayer.frame = self.bounds;
+    maskLayer.path = maskPath.CGPath;
+    self.layer.mask = maskLayer;
+}
+
+- (void)setCornerOnBottom:(CGFloat) conner {
+    UIBezierPath *maskPath;
+    maskPath = [UIBezierPath bezierPathWithRoundedRect:self.bounds
+                                     byRoundingCorners:(UIRectCornerBottomLeft | UIRectCornerBottomRight)
+                                           cornerRadii:CGSizeMake(conner, conner)];
+    CAShapeLayer *maskLayer = [[CAShapeLayer alloc] init];
+    maskLayer.frame = self.bounds;
+    maskLayer.path = maskPath.CGPath;
+    self.layer.mask = maskLayer;
+}
+
+- (void)setCornerOnLeft:(CGFloat) conner {
+    UIBezierPath *maskPath;
+    maskPath = [UIBezierPath bezierPathWithRoundedRect:self.bounds
+                                     byRoundingCorners:(UIRectCornerTopLeft | UIRectCornerBottomLeft)
+                                           cornerRadii:CGSizeMake(conner, conner)];
+    CAShapeLayer *maskLayer = [[CAShapeLayer alloc] init];
+    maskLayer.frame = self.bounds;
+    maskLayer.path = maskPath.CGPath;
+    self.layer.mask = maskLayer;
+}
+
+- (void)setCornerOnRight:(CGFloat) conner {
+    UIBezierPath *maskPath;
+    maskPath = [UIBezierPath bezierPathWithRoundedRect:self.bounds
+                                     byRoundingCorners:(UIRectCornerTopRight | UIRectCornerBottomRight)
+                                           cornerRadii:CGSizeMake(conner, conner)];
+    CAShapeLayer *maskLayer = [[CAShapeLayer alloc] init];
+    maskLayer.frame = self.bounds;
+    maskLayer.path = maskPath.CGPath;
+    self.layer.mask = maskLayer;
+}
+
+- (void)setCornerOnTopLeft:(CGFloat) conner {
+    UIBezierPath *maskPath;
+    maskPath = [UIBezierPath bezierPathWithRoundedRect:self.bounds
+                                     byRoundingCorners:UIRectCornerTopLeft
+                                           cornerRadii:CGSizeMake(conner, conner)];
+    CAShapeLayer *maskLayer = [[CAShapeLayer alloc] init];
+    maskLayer.frame = self.bounds;
+    maskLayer.path = maskPath.CGPath;
+    self.layer.mask = maskLayer;
+}
+
+- (void)setCornerOnTopRight:(CGFloat) conner {
+    UIBezierPath *maskPath;
+    maskPath = [UIBezierPath bezierPathWithRoundedRect:self.bounds
+                                     byRoundingCorners:UIRectCornerTopRight
+                                           cornerRadii:CGSizeMake(conner, conner)];
+    CAShapeLayer *maskLayer = [[CAShapeLayer alloc] init];
+    maskLayer.frame = self.bounds;
+    maskLayer.path = maskPath.CGPath;
+    self.layer.mask = maskLayer;
+}
+
+- (void)setCornerOnBottomLeft:(CGFloat) conner {
+    UIBezierPath *maskPath;
+    maskPath = [UIBezierPath bezierPathWithRoundedRect:self.bounds
+                                     byRoundingCorners:UIRectCornerBottomLeft
+                                           cornerRadii:CGSizeMake(conner, conner)];
+    CAShapeLayer *maskLayer = [[CAShapeLayer alloc] init];
+    maskLayer.frame = self.bounds;
+    maskLayer.path = maskPath.CGPath;
+    self.layer.mask = maskLayer;
+}
+
+- (void)setCornerOnBottomRight:(CGFloat) conner {
+    UIBezierPath *maskPath;
+    maskPath = [UIBezierPath bezierPathWithRoundedRect:self.bounds
+                                     byRoundingCorners:UIRectCornerBottomRight
+                                           cornerRadii:CGSizeMake(conner, conner)];
+    CAShapeLayer *maskLayer = [[CAShapeLayer alloc] init];
+    maskLayer.frame = self.bounds;
+    maskLayer.path = maskPath.CGPath;
+    self.layer.mask = maskLayer;
+}
+
+- (void)setCorner:(CGFloat) conner {
+    UIBezierPath *maskPath;
+    maskPath = [UIBezierPath bezierPathWithRoundedRect:self.bounds
+                                          cornerRadius:conner];
+    CAShapeLayer *maskLayer = [[CAShapeLayer alloc] init];
+    maskLayer.frame = self.bounds;
+    maskLayer.path = maskPath.CGPath;
+    self.layer.mask = maskLayer;
+}
+
+#pragma mark - 设置虚线边框
 - (void)addDashBorderWithWidth:(CGFloat)borderWidth dashPattern:(NSArray<NSNumber *> *)dashPattern color:(UIColor *)color{
     CAShapeLayer *borderLayer = [CAShapeLayer layer];
     borderLayer.bounds = self.bounds;
@@ -121,6 +222,17 @@
     borderLayer.fillColor = [UIColor clearColor].CGColor;
     borderLayer.strokeColor = color.CGColor;
     [self.layer addSublayer:borderLayer];
+}
+
+//获取当前view所在的controller
+- (UIViewController *)getController {
+    for (UIView *next = self.superview; next; next = next.superview) {
+        UIResponder *nextResponder = [next nextResponder];
+        if ([nextResponder isKindOfClass:[UIViewController class]]) {
+            return (UIViewController *)nextResponder;
+        }
+    }
+    return [UIApplication sharedApplication].keyWindow.rootViewController;
 }
 
 @end

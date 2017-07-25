@@ -1,12 +1,12 @@
 //
 //  NSString+Category.h
-//  HCDemo
+//  SpaceHome
 //
-//  Created by suhc on 2017/3/24.
-//  Copyright © 2017年 kongjianjia. All rights reserved.
+//  Created by suhc on 2017/7/18.
+//  Copyright © 2017年 David. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
 
 @interface NSString (Category)
 

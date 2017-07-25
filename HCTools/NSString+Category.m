@@ -1,9 +1,9 @@
 //
 //  NSString+Category.m
-//  HCDemo
+//  SpaceHome
 //
-//  Created by suhc on 2017/3/24.
-//  Copyright © 2017年 kongjianjia. All rights reserved.
+//  Created by suhc on 2017/7/18.
+//  Copyright © 2017年 David. All rights reserved.
 //
 
 #import "NSString+Category.h"
@@ -121,7 +121,7 @@
         //电信号段正则表达式
         NSString *CT_NUM = @"^((133)|(153)|(177)|(18[0,1,9]))\\d{8}$";
         
-
+        
         BOOL isMatch1 = [self matchesRegex:CM_NUM options:NSRegularExpressionCaseInsensitive];
         BOOL isMatch2 = [self matchesRegex:CU_NUM options:NSRegularExpressionCaseInsensitive];
         BOOL isMatch3 = [self matchesRegex:CT_NUM options:NSRegularExpressionCaseInsensitive];

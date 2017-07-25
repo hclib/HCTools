@@ -1,7 +1,14 @@
+//
+//  Foundation+Category.m
+//  SpaceHome
+//
+//  Created by suhc on 2017/7/18.
+//  Copyright © 2017年 David. All rights reserved.
+//
 
-#import "Foundation+Log.h"
+#import "Foundation+Category.h"
 
-@implementation NSArray (Log)
+@implementation NSArray (HC)
 
 - (NSString *)descriptionWithLocale:(id)locale
 {
@@ -18,7 +25,7 @@
 
 @end
 
-@implementation NSDictionary (Log)
+@implementation NSDictionary (HC)
 
 - (NSString *)descriptionWithLocale:(id)locale
 {

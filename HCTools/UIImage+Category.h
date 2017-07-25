@@ -1,20 +1,24 @@
 //
 //  UIImage+Category.h
-//  HCTools
+//  SpaceHome
 //
-//  Created by suhc on 16/3/9.
-//  Copyright © 2016年 kongjianjia. All rights reserved.
+//  Created by suhc on 2017/7/19.
+//  Copyright © 2017年 David. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
 
 @interface UIImage (Category)
+
+- (UIImage *)imageAtRect:(CGRect)rect;
+- (UIImage *)imageByScalingProportionallyToMinimumSize:(CGSize)targetSize;
+- (UIImage *)imageByScalingProportionallyToSize:(CGSize)targetSize;
+- (UIImage *)imageByScalingToSize:(CGSize)targetSize;
+- (UIImage *)imageRotatedByRadians:(CGFloat)radians;
+- (UIImage *)imageRotatedByDegrees:(CGFloat)degrees;
+
 /**
- *  根据颜色获取一个纯色UIImage
- *
- *  @param color 颜色
- *
- *  @return 生成的纯色图片
+ *  通过颜色获取一个纯色UIImage
  */
 + (UIImage *)imageWithColor:(UIColor *)color;
 
