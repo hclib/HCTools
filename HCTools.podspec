@@ -10,7 +10,7 @@ Pod::Spec.new do |s|
   s.social_media_url   = "http://blog.astudyer.com/" #作者的其它联系方式，微博地址，github地址，或者是作者的博客地址等
   s.source       = { :git => "https://github.com/hclib/HCTools.git", :tag => s.version } #项目git地址和当前Release的tag版本
   s.source_files  = "HCTools", "HCTools/**/*.{h,m}" #"*" 表示匹配所有文件 "*.{h,m}" 表示匹配所有以.h和.m结尾的文件 "**" 表示匹配所有子目录
-  s.resource     = 'HCTools/Resources/HCTools.bundle' #项目的资源文件
+  #s.resource     = 'HCTools/Resources/HCTools.bundle' #项目的资源文件
   s.platform     = :ios #平台类型
   s.framework  = "UIKit" #声明所依赖的核心库，这里只用到了UIKit
   s.requires_arc = true #是否支持ARC
