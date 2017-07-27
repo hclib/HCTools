@@ -86,7 +86,6 @@ static char *kTargetKey;
 
 - (void)dealloc{
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UITextViewTextDidChangeNotification object:nil];
-    NSLog(@"%@---dealloc",NSStringFromClass(self.class));
 }
 
 @end

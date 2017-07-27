@@ -75,6 +75,16 @@
 /**
  获取当前view所在的controller
  */
-- (UIViewController *)getController;
+- (UIViewController *)controller;
+
+/**
+ 获取当前view所在的controller的navigationController
+*/
+- (UINavigationController *)navigationController;
+
+/**
+ 获取当前view所在的controller的navigationBar
+*/
+- (UINavigationBar *)navigationBar;
 
 @end

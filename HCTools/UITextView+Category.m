@@ -148,7 +148,6 @@ static inline void swizzleSelector(Class clazz,SEL originalSelector , SEL swizzl
 - (void)dealloc{
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UITextViewTextDidChangeNotification object:nil];
     _placeholderLabel = nil;
-    NSLog(@"%@---dealloc",NSStringFromClass(self.class));
 }
 
 @end

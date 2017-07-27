@@ -15,9 +15,9 @@
 #define BOLDFONT(font)      [UIFont boldSystemFontOfSize:font]
 //获取颜色
 #define HEXCOLOR(hexStr)    [UIColor colorWithHexString:hexStr]
+#define HEXCOLOR_ALPHA(hexStr,alpha)    [UIColor colorWithHexString:hexStr alpha:alpha]
 //获取图片
 #define IMAGE(imageName)     [UIImage imageNamed:imageName]
-
 
 //自定义Log
 #ifdef DEBUG

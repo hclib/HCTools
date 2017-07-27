@@ -225,7 +225,7 @@
 }
 
 //获取当前view所在的controller
-- (UIViewController *)getController {
+- (UIViewController *)controller {
     for (UIView *next = self.superview; next; next = next.superview) {
         UIResponder *nextResponder = [next nextResponder];
         if ([nextResponder isKindOfClass:[UIViewController class]]) {
@@ -233,6 +233,22 @@
         }
     }
     return [UIApplication sharedApplication].keyWindow.rootViewController;
+}
+
+- (UINavigationController *)navigationController{
+    if (self.controller.navigationController) {
+        return self.controller.navigationController;
+    }else{
+        return nil;
+    }
+}
+
+- (UINavigationBar *)navigationBar{
+    if (self.navigationController) {
+        return self.navigationController.navigationBar;
+    }else{
+        return nil;
+    }
 }
 
 @end
