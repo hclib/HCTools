@@ -20,46 +20,32 @@
 @property (nonatomic, assign) CGFloat centerY;
 @property (nonatomic, assign) CGSize size;
 
-#pragma mark - 设置圆角
-/**
- 设置上边圆角
-*/
-- (void)setCornerOnTop:(CGFloat) conner;
-/**
- 设置下边圆角
- */
-- (void)setCornerOnBottom:(CGFloat) conner;
-/**
- 设置左边圆角
- */
-- (void)setCornerOnLeft:(CGFloat) conner;
-/**
- 设置右边圆角
- */
-- (void)setCornerOnRight:(CGFloat) conner;
+/**上边圆角*/
+@property (nonatomic, assign) CGFloat cornerOnTop;
 
-/**
- 设置左上圆角
- */
-- (void)setCornerOnTopLeft:(CGFloat) conner;
+/**下边圆角*/
+@property (nonatomic, assign) CGFloat cornerOnBottom;
 
-/**
- 设置右上圆角
- */
-- (void)setCornerOnTopRight:(CGFloat) conner;
-/**
- 设置左下圆角
- */
-- (void)setCornerOnBottomLeft:(CGFloat) conner;
-/**
- 设置右下圆角
- */
-- (void)setCornerOnBottomRight:(CGFloat) conner;
+/**左边圆角*/
+@property (nonatomic, assign) CGFloat cornerOnLeft;
 
-/**
- 设置所有圆角
- */
-- (void)setCorner:(CGFloat) conner;
+/**右边圆角*/
+@property (nonatomic, assign) CGFloat cornerOnRight;
+
+/**左上圆角*/
+@property (nonatomic, assign) CGFloat cornerOnTopLeft;
+
+/**右上圆角*/
+@property (nonatomic, assign) CGFloat cornerOnTopRight;
+
+/**左下圆角*/
+@property (nonatomic, assign) CGFloat cornerOnBottomLeft;
+
+/**右下圆角*/
+@property (nonatomic, assign) CGFloat cornerOnBottomRight;
+
+/**所有圆角*/
+@property (nonatomic, assign) CGFloat cornerRadius;
 
 #pragma mark - 设置虚线边框
 /**
@@ -70,7 +56,6 @@
  *  @param color   虚线颜色
  */
 - (void)addDashBorderWithWidth:(CGFloat)borderWidth dashPattern:(NSArray<NSNumber *> *)dashPattern color:(UIColor *)color;
-
 
 /**
  获取当前view所在的controller

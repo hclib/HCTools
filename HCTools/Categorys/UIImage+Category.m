@@ -226,4 +226,33 @@ CGFloat RadiansToDegrees(CGFloat radians) {return radians * 180/M_PI;};
     return img;
 }
 
+/**
+ 获取系统竖屏启动页图片
+ */
+- (UIImage *)getPortraitLaunchImage{
+    return [self _getLaunchImageWithOrientation:@"Portrait"];
+}
+
+/**
+ 获取系统横屏启动页图片
+ */
+- (UIImage *)getLandscapeLaunchImage{
+    return [self _getLaunchImageWithOrientation:@"Landscape"];
+}
+
+//获取启动页图片
+- (UIImage *)_getLaunchImageWithOrientation:(NSString *)orientation{
+    CGSize viewSize = [UIScreen mainScreen].bounds.size;
+    NSString *viewOrientation = orientation;
+    NSString *launchImage = nil;
+    NSArray *imagesDic = [NSBundle mainBundle].infoDictionary[@"UILaunchImages"];
+    for (NSDictionary *dic in imagesDic) {
+        CGSize imageSize = CGSizeFromString(dic[@"UILaunchImageSize"]);
+        if (CGSizeEqualToSize(imageSize, viewSize) && [viewOrientation isEqualToString:dic[@"UILaunchImageOrientation"]]) {
+            launchImage = dic[@"UILaunchImageName"];
+        }
+    }
+    return [UIImage imageNamed:launchImage];
+}
+
 @end

@@ -22,4 +22,14 @@
  */
 + (UIImage *)imageWithColor:(UIColor *)color;
 
+/**
+ 获取系统竖屏启动页图片
+ */
+- (UIImage *)getPortraitLaunchImage;
+
+/**
+ 获取系统横屏启动页图片
+ */
+- (UIImage *)getLandscapeLaunchImage;
+
 @end

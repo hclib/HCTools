@@ -1,13 +1,13 @@
 //
-//  Others.h
-//  HCDemo
+//  HCOthers.h
+//  HCTools
 //
-//  Created by suhc on 2017/3/24.
-//  Copyright © 2017年 kongjianjia. All rights reserved.
+//  Created by hclib on 2017/3/24.
+//  Copyright © 2017年 hclib. All rights reserved.
 //
 
-#ifndef Others_h
-#define Others_h
+#ifndef HCOthers_h
+#define HCOthers_h
 
 //获取普通字体
 #define FONT(font)          [UIFont systemFontOfSize:font]

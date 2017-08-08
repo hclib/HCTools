@@ -32,4 +32,9 @@
  */
 - (BOOL)isPhoneNumer;
 
+/**
+ 检查是不是身份证号
+ */
+- (BOOL)isIDCardNumber;
+
 @end

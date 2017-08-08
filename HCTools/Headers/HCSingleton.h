@@ -1,6 +1,6 @@
 
-#ifndef Singleton_h
-#define Singleton_h
+#ifndef HCSingleton_h
+#define HCSingleton_h
 
 /**
  * 快速创建单例
@@ -35,6 +35,5 @@ static className *_instance; \
 }
 
 // 提示:最末尾不要使用反斜线
-
 
 #endif
