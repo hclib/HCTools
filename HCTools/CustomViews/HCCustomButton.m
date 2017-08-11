@@ -58,6 +58,7 @@
     _maxWidth = [self maxWidth];
     _titleH = [self titleHeight];
     _maxHeight = [self maxHeight];
+    [self layoutSubviews];
 }
 
 - (void)setImage:(UIImage *)image forState:(UIControlState)state{
@@ -66,6 +67,7 @@
     _imageH = [self imageHeight];
     _maxWidth = [self maxWidth];
     _maxHeight = [self maxHeight];
+    [self layoutSubviews];
 }
 
 - (void)setPadding:(CGFloat)padding{
