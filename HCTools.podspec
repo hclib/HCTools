@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "HCTools" #项目名
-  s.version      = "1.0.3"    #当前版本
+  s.version      = "1.0.4"    #当前版本
   s.ios.deployment_target = '6.0' #支持的最低iOS系统版本
   s.osx.deployment_target = '10.8' #支持的最低ox系统版本
   s.summary      = "Some sample useful tools!" #项目描述

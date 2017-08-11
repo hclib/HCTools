@@ -30,7 +30,9 @@
         self.type = type;
         [self.titleLabel addObserver:self forKeyPath:@"font" options:NSKeyValueObservingOptionNew context:nil];
         self.imageView.contentMode = UIViewContentModeCenter;
-        if (type == HCCustomButtonTypeImageOnRight) {
+        if (type == HCCustomButtonTypeDefault) {
+            self.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
+        } if (type == UIControlContentHorizontalAlignmentRight) {
             self.contentHorizontalAlignment = UIControlContentHorizontalAlignmentRight;
         }else{
             self.titleLabel.textAlignment = NSTextAlignmentCenter;
@@ -85,7 +87,7 @@
 - (void)layoutSubviews{
     [super layoutSubviews];
     CGRect tempFrame = self.frame;
-    if (self.type == HCCustomButtonTypeImageOnRight) {
+    if (self.type == HCCustomButtonTypeDefault || self.type == HCCustomButtonTypeImageOnRight) {
         if (_imageW < 0.01) {
             //没有图片
             tempFrame.size.width = _titleW;
@@ -101,7 +103,10 @@
 }
 
 - (CGRect)titleRectForContentRect:(CGRect)contentRect{
-    if (self.type == HCCustomButtonTypeImageOnRight) {
+    if (self.type == HCCustomButtonTypeDefault) {
+        CGFloat padding = _imageW < 0.01 ? 0 : _padding;
+        return CGRectMake(_imageW + padding, 0, _titleW, _maxHeight);
+    }else if (self.type == HCCustomButtonTypeImageOnRight) {
         CGFloat padding = _imageW < 0.01 ? 0 : _padding;
         return CGRectMake(_maxWidth - _imageW - padding - _titleW, 0, _titleW, _maxHeight);
     }else if(self.type == HCCustomButtonTypeImageOnTop){
@@ -114,7 +119,9 @@
 }
 
 - (CGRect)imageRectForContentRect:(CGRect)contentRect{
-    if (self.type == HCCustomButtonTypeImageOnRight) {
+    if (self.type == HCCustomButtonTypeDefault) {
+        return CGRectMake(0, 0, _imageW, _maxHeight);
+    }else if (self.type == HCCustomButtonTypeImageOnRight) {
         return CGRectMake(_maxWidth - _imageW, 0, _imageW, _maxHeight);
     }else if (self.type == HCCustomButtonTypeImageOnTop) {
         return CGRectMake(0, 0, _maxWidth, _imageH);

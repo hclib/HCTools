@@ -1,6 +1,6 @@
 //
-//  AttributeLabel.m
-//  demo
+//  HCAttributeLabel.m
+//  HCAttributeLabel
 //
 //  Created by hclib on 2017/8/3.
 //  Copyright © 2017年 hclib. All rights reserved.
@@ -19,6 +19,9 @@
 static NSString *tempStrBefore = @"{{{{{{{{{{";
 static NSString *tempStrAfter =  @"}}}}}}}}}}";
 
+static NSString *tempImgBefore = @"((((((((((";
+static NSString *tempImgAfter =  @"))))))))))";
+
 @implementation HCAttributeLabel
 
 - (instancetype)initWithFrame:(CGRect)frame{
@@ -36,6 +39,8 @@ static NSString *tempStrAfter =  @"}}}}}}}}}}";
     [super setText:text];
     _realText = [text stringByReplacingOccurrencesOfString:@"\\<" withString:tempStrBefore];
     _realText = [_realText stringByReplacingOccurrencesOfString:@"\\>" withString:tempStrAfter];
+    _realText = [_realText stringByReplacingOccurrencesOfString:@"\\[" withString:tempImgBefore];
+    _realText = [_realText stringByReplacingOccurrencesOfString:@"\\]" withString:tempImgAfter];
     
     _hasHighText = [_realText rangeOfString:@"<"].location != NSNotFound;
     
@@ -68,6 +73,9 @@ static NSString *tempStrAfter =  @"}}}}}}}}}}";
 - (void)setFont:(UIFont *)font{
     [super setFont:font];
     _font = font;
+    if (self.text && _hasHighText) {
+        [self setAttributedString];
+    }
 }
 
 - (void)setTextColor:(UIColor *)textColor{
@@ -137,18 +145,51 @@ static NSString *tempStrAfter =  @"}}}}}}}}}}";
         NSUInteger length = [dict[@"length"] integerValue];
         self.linkTextAttributes = @{key_color:value_color};
         
-        [attributedText addAttribute:key_font
-                               value:value_font
-                               range:NSMakeRange(location, length)];
-        
         [attributedText addAttribute:NSLinkAttributeName
                                value:[NSURL URLWithString:@"click://"]
                                range:NSMakeRange(location, length)];
+        
+        [attributedText addAttribute:key_font
+                               value:value_font
+                               range:NSMakeRange(location, length)];
     }
+    //处理图片
+    attributedText = [self addAttachmentWithAttributedString:attributedText];
+    //文字转义处理
     attributedText = [self stringByReplacingOccurrencesOfString:tempStrBefore withString:@"<" inAttributedString:attributedText];
     attributedText = [self stringByReplacingOccurrencesOfString:tempStrAfter withString:@">" inAttributedString:attributedText];
-    
+    //图片转义处理
+    attributedText = [self stringByReplacingOccurrencesOfString:tempImgBefore withString:@"[" inAttributedString:attributedText];
+    attributedText = [self stringByReplacingOccurrencesOfString:tempImgAfter withString:@"]" inAttributedString:attributedText];
     self.attributedText = attributedText;
+}
+
+- (NSMutableAttributedString *)addAttachmentWithAttributedString:(NSMutableAttributedString *)attributedText{
+    NSRange range1;
+    NSRange range2;
+    NSUInteger location = 0;
+    NSUInteger length = 0;
+    range1.location = 0;
+    range2.location = 0;
+    
+    NSString *string = attributedText.string;
+    NSString *beginstr = @"[";
+    NSString *endstr = @"]";
+    while ([string containsString:beginstr] && [string containsString:endstr]) {
+        range1 = [string rangeOfString:beginstr];
+        range2 = [string rangeOfString:endstr];
+        length = range2.location - range1.location + range2.length;
+        location = range1.location;
+        
+        NSTextAttachment *attachment = [[NSTextAttachment alloc] init];
+        NSAttributedString *imgAttrStr = [attributedText attributedSubstringFromRange:NSMakeRange(range1.location + range1.length, length - range1.length - range2.length)];
+        attachment.image = [UIImage imageNamed:imgAttrStr.string];
+        NSAttributedString *attrStr = [NSAttributedString attributedStringWithAttachment:attachment];
+        [attributedText replaceCharactersInRange:NSMakeRange(location, length) withAttributedString:attrStr];
+        string = attributedText.string;
+    }
+    
+    return attributedText;
 }
 
 /**
@@ -169,15 +210,13 @@ static NSString *tempStrAfter =  @"}}}}}}}}}}";
     range2.location = 0;
     
     NSMutableArray *rangeArray = [NSMutableArray array];
-    while (range1.location != NSNotFound && range2.location != NSNotFound) {
+    while ([text containsString:beginstr] && [text containsString:endstr]) {
         range1 = [text rangeOfString:beginstr];
         range2 = [text rangeOfString:endstr];
         length = range2.location - range1.location - 1;
-        if (range1.location != NSNotFound && range2.location != NSNotFound) {
-            location = range1.location;
-            text = [text stringByReplacingOccurrencesOfString:beginstr withString:@"" options:NSCaseInsensitiveSearch range:NSMakeRange(0, location + range1.length)];
-            text = [text stringByReplacingOccurrencesOfString:endstr withString:@"" options:NSCaseInsensitiveSearch range:NSMakeRange(0, range2.location + range2.length - range1.length)];
-        }
+        location = range1.location;
+        text = [text stringByReplacingOccurrencesOfString:beginstr withString:@"" options:NSCaseInsensitiveSearch range:NSMakeRange(0, location + range1.length)];
+        text = [text stringByReplacingOccurrencesOfString:endstr withString:@"" options:NSCaseInsensitiveSearch range:NSMakeRange(0, range2.location + range2.length - range1.length)];
         NSDictionary *dict = @{@"location":@(location),@"length":@(length)};
         [rangeArray addObject:dict];
     }

@@ -9,7 +9,8 @@
 #import <UIKit/UIKit.h>
 
 typedef enum : NSUInteger {
-    HCCustomButtonTypeImageOnRight = 0,   //文字在左，图片在右边
+    HCCustomButtonTypeDefault = 0,        //文字在右边，图片在左边
+    HCCustomButtonTypeImageOnRight,       //文字在左，图片在右边
     HCCustomButtonTypeImageOnTop,         //文字在下面，图片在上面
     HCCustomButtonTypeImageOnBottom,      //文字在上面，图片在下面
 } HCCustomButtonType;
