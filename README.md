@@ -9,7 +9,64 @@ UIView里面有针对快速设置和获取frame的各个值得方法,left,right,
 * Headers里面放了各个模块的头文件集,使用场景是如果你不想使用该框架的所有功能,仅仅想要使用其中的分类,那么你只需要引用HCCategorys.h,而不必引入HCTools.h
 ## 2.集成方法
 `$ pod 'HCTools'`
-## 3.部分效果展示
+## 3.部分代码及其对应的效果展示
+```
+//设置富文本label
+HCAttributeLabel *label = [[HCAttributeLabel alloc]initWithFrame:CGRectMake(100, 100, 360, 120)];
+label.text = @"<富文本效果展示>：我们都有一个[test],名字叫<中国>!❤️我<中华>,因为我们\\[都是\\]\\<炎黄子孙\\>\n<以下是自定义Button效果展示>";
+label.highlightFont = [UIFont systemFontOfSize:18];
+label.textColor = [UIColor greenColor];
+label.highlightColor = [UIColor redColor];
+label.backgroundColor = [UIColor blueColor];
+label.font = [UIFont systemFontOfSize:16];
+label.lineSpacing = 10;
+label.center = self.view.center;
+label.textAlignment = NSTextAlignmentCenter;
+label.HighlightAction = ^(NSString *string){
+NSLog(@"string:%@",string);
+};
+[self.view addSubview:label];
+
+//创建一个图片在左，文字在右边，图片和文字距离为10，上边距离label为20的Button
+HCCustomButton *button1 = [HCCustomButton customButtonWithType:HCCustomButtonTypeDefault];
+[button1 setTitle:@"图片在左，文字在右" forState:UIControlStateNormal];
+button1.padding = 10;
+[button1 setImage:[UIImage imageNamed:@"test"] forState:UIControlStateNormal];
+button1.backgroundColor = [UIColor blueColor];
+button1.top = label.bottom + 20;
+button1.centerX = self.view.centerX;
+[self.view addSubview:button1];
+
+//创建一个图片在右，文字在左，图片和文字距离为10，上边距离button1为20的Button
+HCCustomButton *button2 = [HCCustomButton customButtonWithType:HCCustomButtonTypeImageOnRight];
+[button2 setTitle:@"图片在右，文字在左" forState:UIControlStateNormal];
+button2.padding = 10;
+[button2 setImage:[UIImage imageNamed:@"test"] forState:UIControlStateNormal];
+button2.backgroundColor = [UIColor blueColor];
+button2.top = button1.bottom + 20;
+button2.centerX = self.view.centerX;
+[self.view addSubview:button2];
+
+//创建一个图片在上，文字在下，图片和文字距离为10，上边距离button2为20的Button
+HCCustomButton *button3 = [HCCustomButton customButtonWithType:HCCustomButtonTypeImageOnTop];
+[button3 setTitle:@"图片在上，文字在下" forState:UIControlStateNormal];
+button3.padding = 10;
+[button3 setImage:[UIImage imageNamed:@"test"] forState:UIControlStateNormal];
+button3.backgroundColor = [UIColor blueColor];
+button3.top = button2.bottom + 20;
+[self.view addSubview:button3];
+button3.centerX = self.view.centerX;
+
+//创建一个图片在下，文字在上，图片和文字距离为10，上边距离button3为40的Button
+HCCustomButton *button4 = [HCCustomButton customButtonWithType:HCCustomButtonTypeImageOnBottom];
+[button4 setTitle:@"图片在下，文字在上" forState:UIControlStateNormal];
+button4.padding = 10;
+[button4 setImage:[UIImage imageNamed:@"test"] forState:UIControlStateNormal];
+button4.backgroundColor = [UIColor blueColor];
+button4.top = button3.bottom + 20;
+button4.centerX = self.view.centerX;
+[self.view addSubview:button4];
+```
 ![部分效果](xiaoguo.png)
 
 
