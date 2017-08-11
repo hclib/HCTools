@@ -67,7 +67,7 @@ button4.top = button3.bottom + 20;
 button4.centerX = self.view.centerX;
 [self.view addSubview:button4];
 ```
-![部分效果](xiaoguo.png)
+![部分效果](xiaoguo.jpg)
 
 
 
