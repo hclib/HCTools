@@ -32,7 +32,7 @@
         self.imageView.contentMode = UIViewContentModeCenter;
         if (type == HCCustomButtonTypeDefault) {
             self.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
-        } if (type == UIControlContentHorizontalAlignmentRight) {
+        } if (type == HCCustomButtonTypeImageOnRight) {
             self.contentHorizontalAlignment = UIControlContentHorizontalAlignmentRight;
         }else{
             self.titleLabel.textAlignment = NSTextAlignmentCenter;
