@@ -18,5 +18,6 @@
 #import "UITextField+Category.h"
 #import "UITextView+Category.h"
 #import "UIView+Category.h"
+#import "UIScrollView+Category.h"
 
 #endif /* HCCategorys_h */
