@@ -12,6 +12,8 @@
 
 /**
  自带伸缩功能的headerView
+ 如果是自定义view，需要把需要随着自定义view一起弹性缩放的subView设置autoresizingMask属性
+ 如果subView是UIImageView还需要设置contentMode = UIViewContentModeScaleAspectFill;
  */
 @property (nonatomic, strong) UIView *zoomHeader;
 

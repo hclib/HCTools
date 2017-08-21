@@ -12,6 +12,30 @@
 #define K_ContentOffset @"contentOffset"
 @implementation UIScrollView (Category)
 
+static inline void swizzleSelector(Class clazz,SEL originalSelector , SEL swizzledSelector) {
+    
+    Class class = clazz;
+    
+    Method originalMethod = class_getInstanceMethod(class, originalSelector);
+    Method swizzledMethod = class_getInstanceMethod(class, swizzledSelector);
+    
+    BOOL didAddMethodInit = class_addMethod(class, originalSelector, method_getImplementation(swizzledMethod), method_getTypeEncoding(swizzledMethod));
+    
+    if (didAddMethodInit) {
+        class_addMethod(class, swizzledSelector, method_getImplementation(originalMethod), method_getTypeEncoding(originalMethod));
+    }else{
+        method_exchangeImplementations(originalMethod, swizzledMethod);
+    }
+}
+
++ (void)load{
+    
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        swizzleSelector(self, @selector(removeFromSuperview), @selector(hc_removeFromSuperview));
+    });
+}
+
 - (void)setZoomHeader:(UIView *)zoomHeader{
     objc_setAssociatedObject(self, @selector(zoomHeader), zoomHeader, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     
@@ -52,6 +76,13 @@
         scrollView.zoomHeader.frame = currentFrame;
     }else{
         [self reSizeView:zoomHeader];
+    }
+}
+
+- (void)hc_removeFromSuperview{
+    [self hc_removeFromSuperview];
+    if (self.zoomHeader) {
+        [self removeObserver:self forKeyPath:K_ContentOffset];
     }
 }
 

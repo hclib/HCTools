@@ -14,8 +14,6 @@
     CGFloat _titleH;
     CGFloat _imageW;
     CGFloat _imageH;
-    CGFloat _maxWidth;
-    CGFloat _maxHeight;
 }
 @end
 
@@ -43,11 +41,8 @@
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context{
     _titleW = [self titleWidth];
-    _maxWidth = [self maxWidth];
     _titleH = [self titleHeight];
-    _maxHeight = [self maxHeight];
     
-    [self layoutSubviews];
     [self titleRectForContentRect:CGRectZero];
     [self imageRectForContentRect:CGRectZero];
 }
@@ -55,106 +50,62 @@
 - (void)setTitle:(NSString *)title forState:(UIControlState)state{
     [super setTitle:title forState:state];
     _titleW = [self titleWidth];
-    _maxWidth = [self maxWidth];
     _titleH = [self titleHeight];
-    _maxHeight = [self maxHeight];
-    [self layoutSubviews];
 }
 
 - (void)setImage:(UIImage *)image forState:(UIControlState)state{
     [super setImage:image forState:state];
     _imageW = [self imageWidth];
     _imageH = [self imageHeight];
-    _maxWidth = [self maxWidth];
-    _maxHeight = [self maxHeight];
-    [self layoutSubviews];
 }
 
 - (void)setPadding:(CGFloat)padding{
     _padding = padding;
-    _maxWidth = [self maxWidth];
-    _maxHeight = [self maxHeight];
-    
-    [self layoutSubviews];
     [self titleRectForContentRect:CGRectZero];
     [self imageRectForContentRect:CGRectZero];
 }
 
-- (void)setFrame:(CGRect)frame{
-    [super setFrame:frame];
-    _maxWidth = frame.size.width;
-    _maxHeight = frame.size.height;
-}
-
-- (void)layoutSubviews{
-    [super layoutSubviews];
-    CGRect tempFrame = self.frame;
-    if (self.type == HCCustomButtonTypeDefault || self.type == HCCustomButtonTypeImageOnRight) {
-        if (_imageW < 0.01) {
-            //没有图片
-            tempFrame.size.width = _titleW;
-        }else{
-            tempFrame.size.width = _titleW + _padding + _imageW;
-        }
-        tempFrame.size.height = _maxHeight;
-    }else{
-        tempFrame.size.width = _maxWidth;
-        tempFrame.size.height = _titleH + _padding + _imageH;
-    }
-    self.frame = tempFrame;
-}
-
 - (CGRect)titleRectForContentRect:(CGRect)contentRect{
+    CGFloat width = self.frame.size.width;
+    CGFloat height = self.frame.size.height;
+    CGFloat y = (height - _titleH - _padding - _imageH) * 0.5;
     if (self.type == HCCustomButtonTypeDefault) {
-        CGFloat padding = _imageW < 0.01 ? 0 : _padding;
-        return CGRectMake(_imageW + padding, 0, _titleW, _maxHeight);
+        return CGRectMake(_imageW + _padding, (height - _titleH) * 0.5, _titleW, _titleH);
     }else if (self.type == HCCustomButtonTypeImageOnRight) {
-        CGFloat padding = _imageW < 0.01 ? 0 : _padding;
-        return CGRectMake(_maxWidth - _imageW - padding - _titleW, 0, _titleW, _maxHeight);
+        return CGRectMake(width - _imageW - _padding - _titleW, (height - _titleH) * 0.5, _titleW, _titleH);
     }else if(self.type == HCCustomButtonTypeImageOnTop){
-        return CGRectMake(0, _imageH + _padding, _maxWidth, _titleH);
+        return CGRectMake((width - _titleW) * 0.5, y + _imageH + _padding, _titleW, _titleH);
     }else if(self.type == HCCustomButtonTypeImageOnBottom){
-        return CGRectMake(0, 0, _maxWidth, _titleH);
+        return CGRectMake((width - _titleW) * 0.5, y, _titleW, _titleH);
     }else{
         return CGRectZero;
     }
 }
 
 - (CGRect)imageRectForContentRect:(CGRect)contentRect{
+    CGFloat width = self.frame.size.width;
+    CGFloat height = self.frame.size.height;
+    CGFloat y = (height - _titleH - _padding - _imageH) * 0.5;
     if (self.type == HCCustomButtonTypeDefault) {
-        return CGRectMake(0, 0, _imageW, _maxHeight);
+        return CGRectMake(0, (height - _imageH) * 0.5, _imageW, _imageH);
     }else if (self.type == HCCustomButtonTypeImageOnRight) {
-        return CGRectMake(_maxWidth - _imageW, 0, _imageW, _maxHeight);
+        return CGRectMake(width - _imageW, (height - _titleH) * 0.5, _imageW, _imageH);
     }else if (self.type == HCCustomButtonTypeImageOnTop) {
-        return CGRectMake(0, 0, _maxWidth, _imageH);
+        return CGRectMake((width - _imageW) * 0.5, y, _imageW, _imageH);
     }else if (self.type == HCCustomButtonTypeImageOnBottom) {
-        return CGRectMake(0, _titleH + _padding, _maxWidth, _imageH);
+        return CGRectMake((width - _imageW) * 0.5, y + _titleH + _padding, _imageW, _imageH);
     }else{
         return CGRectZero;
     }
 }
 
 #pragma mark - 计算尺寸
-- (CGFloat)maxWidth{
-    CGFloat width = MAX(_imageW, _titleW);
-    CGFloat maxWidth = MAX(self.frame.size.width, width);
-    
-    return maxWidth;
-}
-
-- (CGFloat)maxHeight{
-    CGFloat height = MAX(_titleH, _imageH);
-    CGFloat maxHeight = MAX(self.frame.size.height, height);
-    
-    return maxHeight;
-}
-
 - (CGFloat)titleWidth{
     return [self widthForText:self.titleLabel.text font:self.titleLabel.font];
 }
 
 - (CGFloat)titleHeight{
-    return [self heightForText:self.titleLabel.text font:self.titleLabel.font width:_maxWidth];
+    return [self heightForText:self.titleLabel.text font:self.titleLabel.font width:[self titleWidth]];
 }
 
 - (CGFloat)imageWidth{
