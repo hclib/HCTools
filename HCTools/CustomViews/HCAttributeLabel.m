@@ -7,11 +7,12 @@
 //
 
 #import "HCAttributeLabel.h"
+#import "NSString+Category.h"
+#import "UIView+Category.h"
 
 @interface HCAttributeLabel ()<UITextViewDelegate>
 {
     NSString *_realText;
-    BOOL _hasHighText;
     UIFont *_font;
     UIColor *_textColor;
 }
@@ -41,41 +42,31 @@ static NSString *tempImgAfter =  @"))))))))))";
     _realText = [_realText stringByReplacingOccurrencesOfString:@"\\>" withString:tempStrAfter];
     _realText = [_realText stringByReplacingOccurrencesOfString:@"\\[" withString:tempImgBefore];
     _realText = [_realText stringByReplacingOccurrencesOfString:@"\\]" withString:tempImgAfter];
-    
-    _hasHighText = [_realText rangeOfString:@"<"].location != NSNotFound;
-    
-    if (_hasHighText) {
-        [self setAttributedString];
+    if (!_font) {
+        self.font = [UIFont systemFontOfSize:17];
     }
+    [self setAttributedString];
 }
 
 - (void)setHighlightColor:(UIColor *)highlightColor{
     _highlightColor = highlightColor;
-    if (self.text && _hasHighText) {
-        [self setAttributedString];
-    }
+    [self setAttributedString];
 }
 
 - (void)setHighlightFont:(UIFont *)highlightFont{
     _highlightFont = highlightFont;
-    if (self.text && _hasHighText) {
-        [self setAttributedString];
-    }
+    [self setAttributedString];
 }
 
 - (void)setLineSpacing:(CGFloat)lineSpacing{
     _lineSpacing = lineSpacing;
-    if (self.text && _hasHighText) {
-        [self setAttributedString];
-    }
+    [self setAttributedString];
 }
 
 - (void)setFont:(UIFont *)font{
     [super setFont:font];
     _font = font;
-    if (self.text && _hasHighText) {
-        [self setAttributedString];
-    }
+    [self setAttributedString];
 }
 
 - (void)setTextColor:(UIColor *)textColor{
@@ -85,23 +76,21 @@ static NSString *tempImgAfter =  @"))))))))))";
 
 - (void)setFirstLineHeadIndent:(CGFloat)firstLineHeadIndent{
     _firstLineHeadIndent = firstLineHeadIndent;
-    if (self.text && _hasHighText) {
-        [self setAttributedString];
-    }
+    [self setAttributedString];
 }
 
 - (void)setParagraphSpacing:(CGFloat)paragraphSpacing{
     _paragraphSpacing = paragraphSpacing;
-    if (self.text && _hasHighText) {
-        [self setAttributedString];
-    }
+    [self setAttributedString];
 }
 
 /**
  设置富文本
  */
 - (void)setAttributedString{
-    
+    if (!self.text.length) {
+        return;
+    }
     NSString *key_font = NSFontAttributeName;
     UIFont *value_font = nil;
     if (_font) {
@@ -138,6 +127,11 @@ static NSString *tempImgAfter =  @"))))))))))";
     paragraphStyle.firstLineHeadIndent = self.firstLineHeadIndent;
     paragraphStyle.alignment = self.textAlignment ? self.textAlignment : NSTextAlignmentLeft;
     paragraphStyle.paragraphSpacing = self.paragraphSpacing;
+    if (_font) {
+        paragraphStyle.maximumLineHeight = _font.pointSize;
+    }else{
+        paragraphStyle.maximumLineHeight = self.font.pointSize;
+    }
     [attributedText addAttribute:NSParagraphStyleAttributeName value:paragraphStyle range:NSMakeRange(0, text.length)];
     //高亮文字属性设置
     for (NSDictionary *dict in rangeArray) {
@@ -152,9 +146,9 @@ static NSString *tempImgAfter =  @"))))))))))";
         [attributedText addAttribute:key_font
                                value:value_font
                                range:NSMakeRange(location, length)];
-    }
+        }
     //处理图片
-    attributedText = [self addAttachmentWithAttributedString:attributedText];
+//    attributedText = [self addAttachmentWithAttributedString:attributedText];
     //文字转义处理
     attributedText = [self stringByReplacingOccurrencesOfString:tempStrBefore withString:@"<" inAttributedString:attributedText];
     attributedText = [self stringByReplacingOccurrencesOfString:tempStrAfter withString:@">" inAttributedString:attributedText];
@@ -173,6 +167,7 @@ static NSString *tempImgAfter =  @"))))))))))";
     range2.location = 0;
     
     NSString *string = attributedText.string;
+    
     NSString *beginstr = @"[";
     NSString *endstr = @"]";
     while ([string containsString:beginstr] && [string containsString:endstr]) {
@@ -183,7 +178,8 @@ static NSString *tempImgAfter =  @"))))))))))";
         
         NSTextAttachment *attachment = [[NSTextAttachment alloc] init];
         NSAttributedString *imgAttrStr = [attributedText attributedSubstringFromRange:NSMakeRange(range1.location + range1.length, length - range1.length - range2.length)];
-        attachment.image = [UIImage imageNamed:imgAttrStr.string];
+        UIImage *image = [UIImage imageNamed:imgAttrStr.string];
+        attachment.image = image;
         NSAttributedString *attrStr = [NSAttributedString attributedStringWithAttachment:attachment];
         [attributedText replaceCharactersInRange:NSMakeRange(location, length) withAttributedString:attrStr];
         string = attributedText.string;
@@ -247,6 +243,31 @@ static NSString *tempImgAfter =  @"))))))))))";
     }
     
     return YES;
+}
+
+- (void)setSelectable:(BOOL)selectable{
+    
+}
+
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
+    //触摸操作开始时,获取当前触摸位置的字符所属的单词
+    UITouch *touch = [touches anyObject];
+    CGPoint touchPoint = [touch locationInView:self];
+    
+    NSInteger characterIndex = [self.layoutManager characterIndexForPoint:touchPoint inTextContainer:self.textContainer fractionOfDistanceBetweenInsertionPoints:NULL];
+    if (characterIndex < self.text.length) {
+        NSRange range;
+        NSURL *URL = [self.attributedText attribute:NSLinkAttributeName atIndex:characterIndex effectiveRange:&range];
+        NSString *highlightText = [self.text substringWithRange:range];
+        if ([[URL scheme] isEqualToString:@"click"]) {
+            if (self.HighlightAction) {
+                self.HighlightAction(highlightText);
+            }
+        }
+    }
+    
+    //结束触摸
+    [super touchesBegan: touches withEvent: event];
 }
 
 @end
