@@ -33,11 +33,6 @@
     return self;
 }
 
-- (void)removeFromSuperview{
-    [super removeFromSuperview];
-    [self.titleLabel removeObserver:self forKeyPath:@"font"];
-}
-
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context{
     _titleW = [self titleWidth];
     _titleH = [self titleHeight];
