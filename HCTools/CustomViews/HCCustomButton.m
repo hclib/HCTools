@@ -28,15 +28,14 @@
         self.type = type;
         [self.titleLabel addObserver:self forKeyPath:@"font" options:NSKeyValueObservingOptionNew context:nil];
         self.imageView.contentMode = UIViewContentModeCenter;
-        if (type == HCCustomButtonTypeDefault) {
-            self.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
-        } if (type == HCCustomButtonTypeImageOnRight) {
-            self.contentHorizontalAlignment = UIControlContentHorizontalAlignmentRight;
-        }else{
-            self.titleLabel.textAlignment = NSTextAlignmentCenter;
-        }
+        self.titleLabel.textAlignment = NSTextAlignmentCenter;
     }
     return self;
+}
+
+- (void)removeFromSuperview{
+    [super removeFromSuperview];
+    [self.titleLabel removeObserver:self forKeyPath:@"font"];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context{
@@ -69,10 +68,25 @@
     CGFloat width = self.frame.size.width;
     CGFloat height = self.frame.size.height;
     CGFloat y = (height - _titleH - _padding - _imageH) * 0.5;
+        
     if (self.type == HCCustomButtonTypeDefault) {
-        return CGRectMake(_imageW + _padding, (height - _titleH) * 0.5, _titleW, _titleH);
+        if (self.contentHorizontalAlignment == UIControlContentHorizontalAlignmentLeft) {
+            return CGRectMake(_imageW + _padding, (height - _titleH) * 0.5, _titleW, _titleH);
+        }else if (self.contentHorizontalAlignment == UIControlContentHorizontalAlignmentRight) {
+            return CGRectMake(width - _titleW, (height - _titleH) * 0.5, _titleW, _titleH);
+        }else{
+            CGFloat x = (width - _imageW - _padding - _titleW) * 0.5 + _imageW + _padding;
+            return CGRectMake(x, (height - _titleH) * 0.5, _titleW, _titleH);
+        }
+        
     }else if (self.type == HCCustomButtonTypeImageOnRight) {
-        return CGRectMake(width - _imageW - _padding - _titleW, (height - _titleH) * 0.5, _titleW, _titleH);
+        if (self.contentHorizontalAlignment == UIControlContentHorizontalAlignmentLeft) {
+            return CGRectMake(0, (height - _titleH) * 0.5, _titleW, _titleH);
+        }else if (self.contentHorizontalAlignment == UIControlContentHorizontalAlignmentRight) {
+            return CGRectMake(width - _imageW - _padding - _titleW, (height - _titleH) * 0.5, _titleW, _titleH);
+        }else{
+            return CGRectMake((width - _imageW - _padding - _titleW) * 0.5, (height - _titleH) * 0.5, _titleW, _titleH);
+        }
     }else if(self.type == HCCustomButtonTypeImageOnTop){
         return CGRectMake((width - _titleW) * 0.5, y + _imageH + _padding, _titleW, _titleH);
     }else if(self.type == HCCustomButtonTypeImageOnBottom){
@@ -87,9 +101,23 @@
     CGFloat height = self.frame.size.height;
     CGFloat y = (height - _titleH - _padding - _imageH) * 0.5;
     if (self.type == HCCustomButtonTypeDefault) {
-        return CGRectMake(0, (height - _imageH) * 0.5, _imageW, _imageH);
+        if (self.contentHorizontalAlignment == UIControlContentHorizontalAlignmentLeft) {
+            return CGRectMake(0, (height - _imageH) * 0.5, _imageW, _imageH);
+        }else if (self.contentHorizontalAlignment == UIControlContentHorizontalAlignmentRight) {
+            return CGRectMake(width - _titleW - _padding - _imageW, (height - _imageH) * 0.5, _imageW, _imageH);
+        }else{
+            CGFloat x = (width - _imageW - _padding - _titleW) * 0.5;
+            return CGRectMake(x, (height - _imageH) * 0.5, _imageW, _imageH);
+        }
     }else if (self.type == HCCustomButtonTypeImageOnRight) {
-        return CGRectMake(width - _imageW, (height - _titleH) * 0.5, _imageW, _imageH);
+        if (self.contentHorizontalAlignment == UIControlContentHorizontalAlignmentLeft) {
+            return CGRectMake(_titleW + _padding, (height - _imageH) * 0.5, _imageW, _imageH);
+        }else if (self.contentHorizontalAlignment == UIControlContentHorizontalAlignmentRight) {
+            return CGRectMake(width - _imageW, (height - _imageH) * 0.5, _imageW, _imageH);
+        }else{
+            CGFloat x = (width - _imageW - _padding - _titleW) * 0.5;
+            return CGRectMake(x + _titleW + _padding, (height - _imageH) * 0.5, _imageW, _imageH);
+        }
     }else if (self.type == HCCustomButtonTypeImageOnTop) {
         return CGRectMake((width - _imageW) * 0.5, y, _imageW, _imageH);
     }else if (self.type == HCCustomButtonTypeImageOnBottom) {
@@ -97,6 +125,13 @@
     }else{
         return CGRectZero;
     }
+}
+
+- (void)setContentHorizontalAlignment:(UIControlContentHorizontalAlignment)contentHorizontalAlignment{
+    [super setContentHorizontalAlignment:contentHorizontalAlignment];
+    
+    [self titleRectForContentRect:CGRectZero];
+    [self imageRectForContentRect:CGRectZero];
 }
 
 #pragma mark - 计算尺寸
