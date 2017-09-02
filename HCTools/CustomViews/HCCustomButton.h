@@ -23,6 +23,9 @@ typedef enum : NSUInteger {
 /**图片和文字之间的间隔*/
 @property (nonatomic, assign) CGFloat padding;
 
+/**
+ 初始化方法 (请使用此方法代替系统的buttonWithType:方法初始化控件)
+ */
 + (instancetype)customButtonWithType:(HCCustomButtonType)type;
 
 /**
