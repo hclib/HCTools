@@ -8,6 +8,26 @@
 
 #import "HCCustomButton.h"
 
+#pragma mark Attribute
+@interface UIButtonAttribute : NSObject
+
+/**背景颜色*/
+@property (nonatomic, strong) UIColor *backgroundColor;
+
+/**状态*/
+@property (nonatomic, strong) NSNumber *state;
+
+/**字体*/
+@property (nonatomic, strong) UIFont *font;
+
+@end
+
+@implementation UIButtonAttribute
+
+@end
+
+static NSString *keyPath_State = @"currentState";
+#pragma mark - CustomButton
 @interface HCCustomButton ()
 {
     CGFloat _titleW;
@@ -15,6 +35,12 @@
     CGFloat _imageW;
     CGFloat _imageH;
 }
+/**当前的状态*/
+@property (nonatomic, assign) UIControlState currentState;
+/**是否有观察者*/
+@property (nonatomic, assign, getter=isHasObserver) BOOL hasObserver;
+/**属性数组*/
+@property (nonatomic, strong) NSMutableArray<UIButtonAttribute *> *attributes;
 @end
 
 @implementation HCCustomButton
@@ -23,25 +49,64 @@
     return [[HCCustomButton alloc] initWithType:type];
 }
 
++ (instancetype)buttonWithType:(UIButtonType)buttonType{
+    NSAssert(NO, @"please use customButtonWithType: to initialize");
+    return [super buttonWithType:buttonType];
+}
+
+- (instancetype)init{
+    NSAssert(NO, @"please use customButtonWithType: to initialize");
+    return [super init];
+}
+
 - (instancetype)initWithType:(HCCustomButtonType)type{
     if (self = [super init]) {
         self.type = type;
         [self.titleLabel addObserver:self forKeyPath:@"font" options:NSKeyValueObservingOptionNew context:nil];
         self.imageView.contentMode = UIViewContentModeCenter;
         self.titleLabel.textAlignment = NSTextAlignmentCenter;
+        self.imageView.backgroundColor = [UIColor clearColor];
+        
+        //默认不需要高亮状态
+        self.needHighlighted = NO;
     }
     return self;
 }
 
+- (void)setNeedHighlighted:(BOOL)needHighlighted{
+    if (_needHighlighted == needHighlighted) {
+        return;
+    }
+    _needHighlighted = needHighlighted;
+    self.adjustsImageWhenHighlighted = _needHighlighted;
+}
+
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context{
-    _titleW = [self titleWidth];
-    _titleH = [self titleHeight];
-    
-    [self titleRectForContentRect:CGRectZero];
-    [self imageRectForContentRect:CGRectZero];
+    if ([keyPath isEqualToString:keyPath_State]) {
+        NSInteger currentState = [change[@"new"] integerValue];
+        for (UIButtonAttribute *attribute in [self attributes]) {
+            if (currentState == attribute.state.integerValue) {
+                if (attribute.backgroundColor) {
+                    self.backgroundColor = attribute.backgroundColor;
+                }
+                if (attribute.font) {
+                    self.titleLabel.font = attribute.font;
+                }
+            }
+        }
+    }else{
+        _titleW = [self titleWidth];
+        _titleH = [self titleHeight];
+        
+        [self titleRectForContentRect:CGRectZero];
+        [self imageRectForContentRect:CGRectZero];
+    }
 }
 
 - (void)setTitle:(NSString *)title forState:(UIControlState)state{
+    if ([title isEqualToString:self.titleLabel.text]) {
+        return;
+    }
     [super setTitle:title forState:state];
     _titleW = [self titleWidth];
     _titleH = [self titleHeight];
@@ -180,9 +245,101 @@
     return result;
 }
 
+#pragma mark - 处理不同状态下的背景颜色和字体大小
+- (void)setBackgroundColor:(UIColor *)backgroundColor forState:(UIControlState)state{
+    [self _setBackgroundColor:backgroundColor font:nil forState:state];
+}
+
+- (void)setFont:(UIFont *)font forState:(UIControlState)state{
+    [self _setBackgroundColor:nil font:font forState:state];
+}
+
+#pragma mark - private method
+- (void)_setBackgroundColor:(UIColor *)backgroundColor font:(UIFont *)font forState:(UIControlState)state{
+    if (state == UIControlStateNormal) {
+        if (backgroundColor) {
+            self.backgroundColor = backgroundColor;
+        }
+        if (font) {
+            self.titleLabel.font = font;
+        }
+    }
+    if (!self.isHasObserver) {
+        self.hasObserver = YES;
+        [self addObserver:self forKeyPath:keyPath_State options:NSKeyValueObservingOptionNew context:nil];
+    }
+    
+    NSUInteger count = self.attributes.count;
+    
+    if (count) {
+        NSUInteger index = 0;
+        UIButtonAttribute *tempAttribute = nil;
+        
+        for (UIButtonAttribute *attribute in self.attributes) {
+            if (state == attribute.state.integerValue) {
+                if (font) {
+                    attribute.font = font;
+                }
+                if (backgroundColor) {
+                    attribute.backgroundColor = backgroundColor;
+                }
+                index = [self.attributes indexOfObject:attribute];
+                tempAttribute = attribute;
+            }
+        }
+        if (tempAttribute) {
+            [[self attributes] replaceObjectAtIndex:index withObject:tempAttribute];
+        }else{
+            tempAttribute = [UIButtonAttribute new];
+            if (backgroundColor) {
+                tempAttribute.backgroundColor = backgroundColor;
+            }
+            if (font) {
+                tempAttribute.font = font;
+            }
+            tempAttribute.state = @(state);
+            [self.attributes addObject:tempAttribute];
+        }
+    }else{
+        UIButtonAttribute *attribute = [UIButtonAttribute new];
+        if (backgroundColor) {
+            attribute.backgroundColor = backgroundColor;
+        }
+        if (font) {
+            attribute.font = font;
+        }
+        attribute.state = @(state);
+        [self.attributes addObject:attribute];
+    }
+}
+
+- (void)touchesMoved:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
+    if (self.isNeedHighlighted) {
+        [super touchesMoved:touches withEvent:event];
+    }else{
+        [super touchesEnded:touches withEvent:event];
+    }
+    self.currentState = self.state;
+}
+
+- (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
+    [super touchesEnded:touches withEvent:event];
+    self.currentState = self.state;
+}
+
+#pragma mark - 懒加载
+- (NSMutableArray *)attributes{
+    if (!_attributes) {
+        _attributes = [NSMutableArray array];
+    }
+    return _attributes;
+}
+
 - (void)dealloc{
     [self.titleLabel removeObserver:self forKeyPath:@"font"];
-    NSLog(@"%@---dealloc",NSStringFromClass(self.class));
+    if (self.isHasObserver) {
+        [self removeObserver:self forKeyPath:keyPath_State];
+    }
 }
 
 @end
